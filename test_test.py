@@ -12,13 +12,9 @@ class TestGamesClickingAuthorized:
         login_page = BasePage(browser, "https://poker.evenbetpoker.com/html5/", timeout=timeout)
         login_page.login()
 
-    def test_go_to_games(self, browser, timeout=15):
-        games_page = BasePage(browser, "https://poker.evenbetpoker.com/html5/", timeout=timeout)
-        games_page.go_to_games()
-
-    def test_games(self, browser, timeout=15):
+    def test_click_all_games(self, browser, timeout=20):
         games_page = GamesPage(browser, "https://poker.evenbetpoker.com/html5/", timeout=timeout)
-        games_page.find_all_games()
-
+        games_page.go_to_games()
+        games_page.click_all_games()
 
 
