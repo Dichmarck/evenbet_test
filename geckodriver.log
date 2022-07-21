@@ -1,0 +1,17 @@
+1658386395697	geckodriver	INFO	Listening on 127.0.0.1:52536
+1658386398795	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "52537" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\budnov\\AppData\\Local\\Temp\\rust_mozprofilezHsQum"
+1658386400045	Marionette	INFO	Marionette enabled
+1658386400062	Marionette	INFO	Listening on port 52550
+WebDriver BiDi listening on ws://localhost:52537
+Read port: 52550
+1658386400387	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\budnov\\AppData\\Local\\Temp\\rust_mozprofilezHsQum\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:52537/devtools/browser/47a73b94-3d7f-4e53-a971-81fb829e2968
+JavaScript warning: https://poker.evenbetpoker.com/html5/js/app.js?v=9f62d7, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+JavaScript warning: https://poker.evenbetpoker.com/html5/js/app.js?v=9f62d7, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+JavaScript warning: , line 0: WebGL warning: vertexAttribI?Pointer: Bad `type`: 0
+JavaScript warning: , line 0: WebGL warning: drawArraysInstanced: Vertex attrib array 0 is enabled but has no buffer bound.
+JavaScript warning: , line 0: WebGL warning: getShaderPrecisionFormat: precisiontype: Invalid enum value 0 (Did you typo `gl.SOMETHINGG` and pass `undefined`?)
+JavaScript warning: https://poker.evenbetpoker.com/html5/js/app.js?v=9f62d7, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+1658386415655	Marionette	INFO	Stopped listening on port 52550
+[Parent 17612, IPC I/O Parent] WARNING: file /builds/worker/checkouts/gecko/ipc/chromium/src/base/process_util_win.cc:167
