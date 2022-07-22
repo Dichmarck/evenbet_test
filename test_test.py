@@ -18,3 +18,9 @@ class TestGamesClickingAuthorized:
         games_page.click_all_games()
 
 
+@pytest.mark.scroll
+def test_scroll_all_games(browser, timeout=20):
+    games_page = GamesPage(browser, "https://poker.evenbetpoker.com/html5/", timeout=timeout)
+    games_page.open()
+    games_page.go_to_games()
+    games_page.scroll_all_games()

@@ -15,3 +15,20 @@ JavaScript warning: , line 0: WebGL warning: getShaderPrecisionFormat: precision
 JavaScript warning: https://poker.evenbetpoker.com/html5/js/app.js?v=9f62d7, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
 1658386415655	Marionette	INFO	Stopped listening on port 52550
 [Parent 17612, IPC I/O Parent] WARNING: file /builds/worker/checkouts/gecko/ipc/chromium/src/base/process_util_win.cc:167
+1658450903043	geckodriver	INFO	Listening on 127.0.0.1:54652
+1658450906117	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "54653" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\budnov\\AppData\\Local\\Temp\\rust_mozprofileq78dVD"
+1658450907194	Marionette	INFO	Marionette enabled
+1658450907201	Marionette	INFO	Listening on port 54663
+WebDriver BiDi listening on ws://localhost:54653
+Read port: 54663
+1658450907487	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\budnov\\AppData\\Local\\Temp\\rust_mozprofileq78dVD\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:54653/devtools/browser/6b101579-18cf-4712-9a3b-3bb255f8c91b
+JavaScript warning: https://poker.evenbetpoker.com/html5/js/app.js?v=9f62d7, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+JavaScript warning: https://poker.evenbetpoker.com/html5/js/app.js?v=9f62d7, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+JavaScript warning: , line 0: WebGL warning: vertexAttribI?Pointer: Bad `type`: 0
+JavaScript warning: , line 0: WebGL warning: drawArraysInstanced: Vertex attrib array 0 is enabled but has no buffer bound.
+JavaScript warning: , line 0: WebGL warning: getShaderPrecisionFormat: precisiontype: Invalid enum value 0 (Did you typo `gl.SOMETHINGG` and pass `undefined`?)
+JavaScript warning: https://poker.evenbetpoker.com/html5/js/app.js?v=9f62d7, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+1658450954161	Marionette	INFO	Stopped listening on port 54663
+JavaScript error: resource://gre/modules/Sqlite.jsm, line 1105: Error: Sqlite.jsm has been shutdown. Cannot open connection to: C:\Users\budnov\AppData\Local\Temp\rust_mozprofileq78dVD\protections.sqlite

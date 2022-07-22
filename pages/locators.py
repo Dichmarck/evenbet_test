@@ -5,7 +5,8 @@ class GamesPageLocator:
     GAME = (By.CSS_SELECTOR, ".viewable-monitor .block")
     CLOSE_GAME = (By.CSS_SELECTOR, ".block.panel.button.SimpleButton.SimpleButton_v_transparent.SimpleButton_c_blue.SimpleButton_use_icon.Dialog__top_action.close_button.SimpleButton_interactive")
     GAMES_CONTAINER = (By.CSS_SELECTOR, ".block.scroll-wrapper .WidgetCasinoGameListContainer__items")
-
+    GAMES_CONTAINER = (By.CSS_SELECTOR, ".block.panel.LobbyContainer.LobbyContainer_v_default.LobbyContainer_c_blue.lpg-lobby-casino-game-list")
+    #.block.panel.LobbyContainer.LobbyContainer_v_default.LobbyContainer_c_blue.lpg-lobby-casino-game-list
 
 class BasePageLocators:
     BLOCK_TEXTURE = (By.CSS_SELECTOR, ".block.texture")
