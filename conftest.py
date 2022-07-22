@@ -23,7 +23,8 @@ def browser(request):
 
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
-    browser.set_window_size(1920, 1080)
+    #browser.set_window_size(1920, 1080)
+    browser.set_window_size(800, 800)
     yield browser
 
     print("\nQuit browser after test..")

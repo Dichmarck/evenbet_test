@@ -70,12 +70,17 @@ class BasePage:
         return self.browser.find_element(*BasePageLocators.LOGO)
 
     def should_be_clickable_casino_link(self):
-        assert self.is_element_clickable(*BasePageLocators.CASINO_LINK), "No clickable Casino link (button) at page"
+        assert self.is_element_clickable(*BasePageLocators.CASINO_LINK), "No clickable Casino link (button) on page"
         return self.browser.find_element(*BasePageLocators.CASINO_LINK)
 
     def should_be_clickable_games_link(self):
-        assert self.is_element_clickable(*BasePageLocators.GAMES_LINK), "No clickable Games link (button) at page"
+        assert self.is_element_clickable(*BasePageLocators.GAMES_LINK), "No clickable Games link (button) on page"
         return self.browser.find_element(*BasePageLocators.GAMES_LINK)
+
+    def should_be_clickable_providers_link(self):
+        assert self.is_element_clickable(*BasePageLocators.PROVIDERS_LINK), \
+            "No clickable Providers link (button) at page"
+        return self.browser.find_element(*BasePageLocators.PROVIDERS_LINK)
 
     def go_to_games(self):
         self.should_be_logo()
@@ -85,6 +90,16 @@ class BasePage:
         games_link = self.should_be_clickable_games_link()
         games_link.click()
         print(games_link)
+        time.sleep(2)
+
+    def go_to_providers(self):
+        self.should_be_logo()
+        self.should_not_be_block_texture()
+        casino_link = self.should_be_clickable_casino_link()
+        casino_link.click()
+        providers_link = self.should_be_clickable_providers_link()
+        providers_link.click()
+        print(providers_link)
         time.sleep(2)
 
     def should_be_clickable_login_link(self):
@@ -134,14 +149,7 @@ class GamesPage(BasePage):
             "No Games Container at games page"
         return self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
 
-    def should_be_clickable_element(self, element):
-        if element.is_displayed() and element.is_enabled():
-            return element
-        else:
-            print(f"Element is not clockable: {element}")
-            raise ElementNotInteractableException
-
-    def scroll_all_games(self):
+    def scroll_all_games(self, provider_games_count=1375):
         self.should_not_be_block_texture()
         games_container = self.should_be_games_container()
         self.show_alert("Games Container is loaded", 0.3)
@@ -150,8 +158,9 @@ class GamesPage(BasePage):
 
         games = []
         games_visited = 0
+        exceptions_count = 0
 
-        while len(games) < 100:
+        while games_visited < provider_games_count:
             time.sleep(1)
             new_games = self.browser.find_elements(*GamesPageLocator.GAME)
 
@@ -182,9 +191,34 @@ class GamesPage(BasePage):
                 except StaleElementReferenceException:
                     games.remove(game)
                     new_games_uniq.remove(game)
+                    exceptions_count += 1
 
 
-            action_chains.scroll_from_origin(scroll_origin, 0, 142).perform()
+            action_chains.scroll_from_origin(scroll_origin, 0, 284).perform() # высота блока 142
 
-        #print(len(games))
-        #print(games_visited)
+        print("Всего игр: ", len(games), "(", len(set(games)), ")")
+        print("Игр посещено: ", games_visited)
+        print("Всего игр у провадера: ", provider_games_count)
+        print("Исключений сработано: ", exceptions_count)
+
+
+class ProvidersPage(GamesPage):
+
+    def should_be_providers_container(self):
+        assert self.is_element_appeared(*ProvidersPageLocator.PROVIDERS_CONTAINER, timeout=10), \
+            "No Providers Container at providers page"
+        return self.browser.find_element(*ProvidersPageLocator.PROVIDERS_CONTAINER)
+
+    def find_games_count_by_provider_index(self, index):
+        self.should_be_providers_container()
+        provider_games_count = self.browser.find_elements(*ProvidersPageLocator.PROVIDER_GAME_COUNT)[index].text
+        provider_games_count = int(provider_games_count.split()[0])
+        print(provider_games_count)
+        return provider_games_count
+
+    def open_games_by_providers_index(self, index):
+        self.should_be_providers_container()
+        providers = self.browser.find_elements(*ProvidersPageLocator.PROVIDER)
+        providers[index].click()
+        time.sleep(2)
+
