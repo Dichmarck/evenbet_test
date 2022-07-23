@@ -35,7 +35,7 @@ class BasePage:
     def is_element_appeared(self, how, what, timeout=30):
         try:
             WebDriverWait(self.browser, timeout, poll_frequency=0.2).until(EC.presence_of_element_located((how, what)))
-        except [NoSuchElementException, TimeoutException]:
+        except TimeoutException:
             return False
         return True
 
@@ -139,6 +139,8 @@ class BasePage:
 
 class GamesPage(BasePage):
 
+    game_block_height = 142
+
     def should_be_clickable_close_game(self):
         assert self.is_element_clickable(*GamesPageLocator.CLOSE_GAME, timeout=5), \
             "No clickable Close-Game button at game page"
@@ -149,7 +151,47 @@ class GamesPage(BasePage):
             "No Games Container at games page"
         return self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
 
-    def scroll_all_games(self, provider_games_count=1375):
+    def scroll_to_game_by_index(self, index):
+        #self.should_not_be_block_texture()
+        games_container = self.should_be_games_container()
+        #self.show_alert("Games Container is loaded", 0.3)
+        action_chains = ActionChains(self.browser)
+        scroll_origin = ScrollOrigin.from_element(games_container)
+        games = []
+
+        while True:
+            new_games_uniq = []
+            load_retries = 0
+
+            while len(new_games_uniq) == 0 and load_retries < 10:
+                time.sleep(1)
+                new_games = self.browser.find_elements(*GamesPageLocator.GAME)
+                for game in new_games:
+                    if game not in games:
+                        new_games_uniq.append(game)
+                        games.append(game)
+                load_retries += 1
+            if load_retries >= 10:
+                print("Игр не осталось!")
+                return False
+
+            if len(set(games)) >= index:
+                return True
+            #for game in new_games_uniq:
+            #    try:
+            #        time.sleep(0.1)
+            #        if games.index(game) == index:
+            #            return True
+            #
+            #    except StaleElementReferenceException:
+            #        games.remove(game)
+            #        new_games_uniq.remove(game)
+
+            action_chains.scroll_from_origin(scroll_origin, 0, self.game_block_height).perform()  # высота блока 142
+
+
+
+    def scroll_and_click_all_games(self, total_games_count=1375):
         self.should_not_be_block_texture()
         games_container = self.should_be_games_container()
         self.show_alert("Games Container is loaded", 0.3)
@@ -160,46 +202,70 @@ class GamesPage(BasePage):
         games_visited = 0
         exceptions_count = 0
 
-        while games_visited < provider_games_count:
+        while games_visited < total_games_count + 100:
             time.sleep(1)
-            new_games = self.browser.find_elements(*GamesPageLocator.GAME)
-
-            if len(new_games) == 0:
-                continue
-
             new_games_uniq = []
 
-            for game in new_games:
-                if game not in games:
-                    new_games_uniq.append(game)
-                    games.append(game)
+            load_retries = 0
+            while len(new_games_uniq) == 0 and load_retries < 10:
+                time.sleep(1)
+                new_games = self.browser.find_elements(*GamesPageLocator.GAME)
+                for game in new_games:
+                    if game not in games:
+                        new_games_uniq.append(game)
+                        games.append(game)
+                load_retries += 1
+            if load_retries >= 10:
+                print("Игр не осталось! - КОНЕЦ ТЕСТА")
+                break
 
-            #for game in games:
-            #    print(game)
-            print("Всего игр: ", len(games))
-
+            fullscren_game_flag = False
             i = 0
             for game in new_games_uniq:
                 try:
                     #action_chains.scroll_to_element(game).perform()
+                    game_index = games.index(game)
                     time.sleep(0.1)
                     game.click()
-                    action_chains.send_keys(Keys.ESCAPE).perform()
+
+                    if self.is_element_appeared(*GamesPageLocator.GAME_WINDOW, timeout=2):
+                        time.sleep(0.1)
+                        action_chains.send_keys(Keys.ESCAPE).perform()
+                        print("Game windows appeared, ESCAPE pressed")
+                    else:
+                        print("Игр (изначально): ", len(games))
+                        self.go_to_games()
+                        self.scroll_to_game_by_index(game_index)
+                        print("Игр (после прокрутки): ", len(games))
+                        fullscren_game_flag = True
+                        #action_chains.scroll_from_origin(scroll_origin, 0, -1 * self.game_block_height).perform()
+
+                        #self.skip_all_games_until_index(game_index)
+
+                    print("Игра посещена: ", game)
                     games_visited += 1
                     i += 1
-                    print("i = ", i)
+                    #print("i = ", i)
                 except StaleElementReferenceException:
                     games.remove(game)
                     new_games_uniq.remove(game)
                     exceptions_count += 1
+                    #action_chains.scroll_from_origin(scroll_origin, 0, -142).perform()
+                    print("Исключение сработано: ", game)
+                    #print("Исключение на игре № ", games.index(game))
+                    #print("Номер в ряду (текущем блоке): ", new_games_uniq.index(game))
 
+            if fullscren_game_flag:
+                continue
+            #self.show_alert(f"Игр просмотрено: {games_visited}", 0.2)
 
-            action_chains.scroll_from_origin(scroll_origin, 0, 284).perform() # высота блока 142
+            action_chains.scroll_from_origin(scroll_origin, 0, self.game_block_height).perform()  # высота блока 142
 
         print("Всего игр: ", len(games), "(", len(set(games)), ")")
         print("Игр посещено: ", games_visited)
-        print("Всего игр у провадера: ", provider_games_count)
+        print("Всего игр у провадера: ", total_games_count)
         print("Исключений сработано: ", exceptions_count)
+        assert games_visited == total_games_count, "Количество посещенных игр не равно общему количеству игр"
 
 
 class ProvidersPage(GamesPage):
@@ -221,4 +287,6 @@ class ProvidersPage(GamesPage):
         providers = self.browser.find_elements(*ProvidersPageLocator.PROVIDER)
         providers[index].click()
         time.sleep(2)
+
+
 

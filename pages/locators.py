@@ -5,8 +5,7 @@ from selenium.webdriver.common.by import By
 
 class BasePageLocators:
     BLOCK_TEXTURE = (By.CSS_SELECTOR, ".block.texture")
-    LOGO = (By.CSS_SELECTOR,
-            ".block.panel.LobbyContainer.LobbyContainer_v_default.LobbyContainer_c_blue.lpg-lobby-promo-list")
+    LOGO = (By.CSS_SELECTOR, ".block.panel.lobby_logo")
     LOGIN_LINK = (By.CSS_SELECTOR,""".block.panel.button.SimpleButton.SimpleButton_v_flat.SimpleButton_c_light.SimpleButton_use_text_use_icon.MiniUserInfo__login_button.SimpleButton_interactive""" )
     CASINO_LINK = (By.XPATH, "//div[text()='Casino']")
     SPINS_LINK = (By.XPATH, "//div[text()='Spins']")
@@ -21,6 +20,7 @@ class GamesPageLocator:
     #GAMES_CONTAINER = (By.CSS_SELECTOR, ".block.scroll-wrapper .WidgetCasinoGameListContainer__items")
     GAMES_CONTAINER = (By.CSS_SELECTOR, ".block.panel.LobbyContainer.LobbyContainer_v_default.LobbyContainer_c_blue.lpg-lobby-casino-game-list")
     #.block.panel.LobbyContainer.LobbyContainer_v_default.LobbyContainer_c_blue.lpg-lobby-casino-game-list
+    GAME_WINDOW = (By.CSS_SELECTOR, ".block.Popup__content")
 
 
 class ProvidersPageLocator:
