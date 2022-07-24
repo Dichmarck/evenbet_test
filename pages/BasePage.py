@@ -1,3 +1,4 @@
+import copy
 import time
 from telnetlib import EC
 
@@ -130,142 +131,102 @@ class BasePage:
         password_field = self.should_be_password_field()
         username_field.send_keys("for_tests")
         password_field.send_keys("for_tests")
-        #password_field.send_keys(Keys.ENTER)
+        # password_field.send_keys(Keys.ENTER)
 
         sign_in_button = self.should_be_sign_in_button_field()
-        #self.should_not_be_block_texture()
+        # self.should_not_be_block_texture()
         sign_in_button.click()
 
 
 class GamesPage(BasePage):
-
     game_block_height = 142
 
     def should_be_clickable_close_game(self):
-        assert self.is_element_clickable(*GamesPageLocator.CLOSE_GAME, timeout=5), \
+        assert self.is_element_clickable(*BasePageLocators.CLOSE_BUTTON, timeout=5), \
             "No clickable Close-Game button at game page"
-        return self.browser.find_element(*GamesPageLocator.CLOSE_GAME)
+        return self.browser.find_element(*BasePageLocators.CLOSE_BUTTON)
 
     def should_be_games_container(self):
         assert self.is_element_appeared(*GamesPageLocator.GAMES_CONTAINER, timeout=10), \
             "No Games Container at games page"
         return self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
 
-    def scroll_to_game_by_index(self, index):
-        #self.should_not_be_block_texture()
-        games_container = self.should_be_games_container()
-        #self.show_alert("Games Container is loaded", 0.3)
+    #def scroll_and_click_all_games(self, total_games_count=1375, start_index=0, games_visited=0, exceptions=0):
+    #    print(f"Ф-я запущена с параметрами: {total_games_count}, {start_index}, {games_visited}, {exceptions}")
+    #    self.should_not_be_block_texture()  # проверка на отсутсвие блока загрузки
+    #    games_container = self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
+    #    action_chains = ActionChains(self.browser)
+    #    scroll_origin = ScrollOrigin.from_element(games_container)
+    #    action_chains.move_to_element_with_offset(games_container, -80, 0).perform()
+    #    games = []
+    #    games = self.browser.find_elements(*GamesPageLocator.GAME)
+    #    time.sleep(2)
+    #    print(len(games))
+#
+    #    for i in range(len(games)):
+    #        print(i)
+    #        #action_chains = ActionChains(self.browser)
+    #        new_games = self.browser.find_elements(*GamesPageLocator.GAME)
+    #        action_chains.scroll_to_element(new_games[i]).move_to_element(new_games[i]).perform()
+    #        new_games[i].click()
+    #        if self.is_element_appeared(*GamesPageLocator.GAME_WINDOW, timeout=0.3):
+    #            time.sleep(0.1)
+    #            action_chains.send_keys(Keys.ESCAPE).perform()
+    #        else:
+    #            self.go_to_games()
+    #            self.
+
+    def scroll_and_click_all_games(self, total_games_count=1375, start_index=0, visited_games=0):
+
+        self.should_not_be_block_texture()  # проверка на отсутсвие блока загрузки
+        games_container = self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
+
         action_chains = ActionChains(self.browser)
         scroll_origin = ScrollOrigin.from_element(games_container)
-        games = []
+        action_chains.move_to_element_with_offset(games_container, -80, 0).perform()
+
+        visited = visited_games
+        games = []  # список для всех, найдённых при данном вызове функции
+        start = start_index
 
         while True:
-            new_games_uniq = []
+
+            new_games_added = 0
             load_retries = 0
-
-            while len(new_games_uniq) == 0 and load_retries < 10:
+            while new_games_added == 0 and load_retries < 5:
                 time.sleep(1)
-                new_games = self.browser.find_elements(*GamesPageLocator.GAME)
-                for game in new_games:
-                    if game not in games:
-                        new_games_uniq.append(game)
-                        games.append(game)
-                load_retries += 1
-            if load_retries >= 10:
-                print("Игр не осталось!")
-                return False
-
-            if len(set(games)) >= index:
-                return True
-            #for game in new_games_uniq:
-            #    try:
-            #        time.sleep(0.1)
-            #        if games.index(game) == index:
-            #            return True
-            #
-            #    except StaleElementReferenceException:
-            #        games.remove(game)
-            #        new_games_uniq.remove(game)
-
-            action_chains.scroll_from_origin(scroll_origin, 0, self.game_block_height).perform()  # высота блока 142
-
-
-
-    def scroll_and_click_all_games(self, total_games_count=1375):
-        self.should_not_be_block_texture()
-        games_container = self.should_be_games_container()
-        self.show_alert("Games Container is loaded", 0.3)
-        action_chains = ActionChains(self.browser)
-        scroll_origin = ScrollOrigin.from_element(games_container)
-
-        games = []
-        games_visited = 0
-        exceptions_count = 0
-
-        while games_visited < total_games_count + 100:
-            time.sleep(1)
-            new_games_uniq = []
-
-            load_retries = 0
-            while len(new_games_uniq) == 0 and load_retries < 10:
+                loaded_games = self.browser.find_elements(*GamesPageLocator.GAME)
+                action_chains.scroll_to_element(loaded_games[0]).move_to_element(loaded_games[0]).perform()
                 time.sleep(1)
-                new_games = self.browser.find_elements(*GamesPageLocator.GAME)
-                for game in new_games:
-                    if game not in games:
-                        new_games_uniq.append(game)
-                        games.append(game)
-                load_retries += 1
-            if load_retries >= 10:
-                print("Игр не осталось! - КОНЕЦ ТЕСТА")
+                action_chains.click(games_container).perform()
+                loaded_games = self.browser.find_elements(*GamesPageLocator.GAME)
+                for loaded_game in loaded_games:
+                    if loaded_game not in games:
+                        games.append(loaded_game)
+                        new_games_added += 1
+            if load_retries >= 5:
+                print("===== Просмотрены все игры на странице! =====")
                 break
 
-            fullscren_game_flag = False
-            i = 0
-            for game in new_games_uniq:
-                try:
-                    #action_chains.scroll_to_element(game).perform()
-                    game_index = games.index(game)
+            print(f"Игр обнаружено: {len(games)}, игр проверено: {visited}")
+            for game in games[start:]:
+                action_chains.scroll_to_element(game).move_to_element(game).perform()
+                game.click()
+                start += 1
+                visited += 1
+                if self.is_element_appeared(*GamesPageLocator.GAME_WINDOW, timeout=0.3):  # если игра в окне
                     time.sleep(0.1)
-                    game.click()
+                    action_chains.send_keys(Keys.ESCAPE).perform()  # закрываем
+                else:
+                    self.go_to_games()  # иначе переходим во вкладку игры
+                    self.scroll_and_click_all_games(start_index=games.index(game)+1, visited_games=visited)
+                    # вызваем функцию, но с пропуском всех уже прокликанных игр
+                    return
 
-                    if self.is_element_appeared(*GamesPageLocator.GAME_WINDOW, timeout=2):
-                        time.sleep(0.1)
-                        action_chains.send_keys(Keys.ESCAPE).perform()
-                        print("Game windows appeared, ESCAPE pressed")
-                    else:
-                        print("Игр (изначально): ", len(games))
-                        self.go_to_games()
-                        self.scroll_to_game_by_index(game_index)
-                        print("Игр (после прокрутки): ", len(games))
-                        fullscren_game_flag = True
-                        #action_chains.scroll_from_origin(scroll_origin, 0, -1 * self.game_block_height).perform()
+            action_chains.scroll_from_origin(scroll_origin, 0, 142).perform()  # если загруженные игры кончились,
+            time.sleep(1)
 
-                        #self.skip_all_games_until_index(game_index)
-
-                    print("Игра посещена: ", game)
-                    games_visited += 1
-                    i += 1
-                    #print("i = ", i)
-                except StaleElementReferenceException:
-                    games.remove(game)
-                    new_games_uniq.remove(game)
-                    exceptions_count += 1
-                    #action_chains.scroll_from_origin(scroll_origin, 0, -142).perform()
-                    print("Исключение сработано: ", game)
-                    #print("Исключение на игре № ", games.index(game))
-                    #print("Номер в ряду (текущем блоке): ", new_games_uniq.index(game))
-
-            if fullscren_game_flag:
-                continue
-            #self.show_alert(f"Игр просмотрено: {games_visited}", 0.2)
-
-            action_chains.scroll_from_origin(scroll_origin, 0, self.game_block_height).perform()  # высота блока 142
-
-        print("Всего игр: ", len(games), "(", len(set(games)), ")")
-        print("Игр посещено: ", games_visited)
-        print("Всего игр у провадера: ", total_games_count)
-        print("Исключений сработано: ", exceptions_count)
-        assert games_visited == total_games_count, "Количество посещенных игр не равно общему количеству игр"
+        assert visited == total_games_count, "Количество проверенных игр не равно общему количеству"
 
 
 class ProvidersPage(GamesPage):
@@ -288,5 +249,61 @@ class ProvidersPage(GamesPage):
         providers[index].click()
         time.sleep(2)
 
+    def scroll_and_click_all_games(self, total_games_count=1375, start_index=0, visited_games=0, provider_index=0):
 
+        self.should_not_be_block_texture()  # проверка на отсутсвие блока загрузки
+        games_container = self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
 
+        action_chains = ActionChains(self.browser)
+        scroll_origin = ScrollOrigin.from_element(games_container)
+        action_chains.move_to_element_with_offset(games_container, -80, 0).perform()
+
+        visited = visited_games
+        games = []  # список для всех, найдённых при данном вызове функции
+        start = start_index
+
+        while True:
+
+            new_games_added = 0
+            load_retries = 0
+            while new_games_added == 0 and load_retries < 5:
+                time.sleep(1)
+                loaded_games = self.browser.find_elements(*GamesPageLocator.GAME)
+                action_chains.scroll_to_element(loaded_games[0]).move_to_element(loaded_games[0]).perform()
+                time.sleep(1)
+                action_chains.click(games_container).perform()
+                loaded_games = self.browser.find_elements(*GamesPageLocator.GAME)
+                for loaded_game in loaded_games:
+                    if loaded_game not in games:
+                        games.append(loaded_game)
+                        new_games_added += 1
+                load_retries += 1
+            if load_retries >= 5:
+                print("===== Просмотрены все игры на странице! =====")
+                break
+
+            print(f"Игр обнаружено: {len(games)}, игр проверено: {visited}")
+            for game in games[start:]:
+                action_chains.scroll_to_element(game).move_to_element(game).perform()
+                game.click()
+                start += 1
+                visited += 1
+                if self.is_element_appeared(*GamesPageLocator.GAME_WINDOW, timeout=0.3):  # если игра в окне
+                    time.sleep(0.1)
+                    action_chains.send_keys(Keys.ESCAPE).perform()  # закрываем
+                else:
+                    self.go_to_games()  # иначе переходим во вкладку игры
+                    self.go_to_providers()
+                    self.open_games_by_providers_index(provider_index)
+                    self.scroll_and_click_all_games(total_games_count=total_games_count,
+                                                    start_index=games.index(game)+1,
+                                                    visited_games=visited,
+                                                    provider_index=provider_index)
+                    # вызваем функцию, но с пропуском всех уже прокликанных игр
+                    return
+
+            action_chains.scroll_from_origin(scroll_origin, 0, 142).perform()  # если загруженные игры кончились,
+            time.sleep(1)
+            
+        print(f"Игр обнаружено: {len(games)}, игр проверено: {visited}")
+        assert visited == total_games_count, "Количество проверенных игр не равно общему количеству"

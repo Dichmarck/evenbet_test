@@ -1,6 +1,7 @@
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 
 def pytest_addoption(parser):
@@ -23,8 +24,10 @@ def browser(request):
 
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
-    #browser.set_window_size(1920, 1080)
-    browser.set_window_size(1600, 1080)
+    browser.delete_all_cookies()
+    browser.set_window_size(1920, 1080)
+    #browser.set_window_size(1600, 1080)
+    browser.maximize_window()
     yield browser
 
     print("\nQuit browser after test..")
