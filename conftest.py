@@ -28,6 +28,7 @@ def browser(request):
     browser.set_window_size(1920, 1080)
     #browser.set_window_size(1600, 1080)
     browser.maximize_window()
+
     yield browser
 
     print("\nQuit browser after test..")

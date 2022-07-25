@@ -90,16 +90,14 @@ class BasePage:
         casino_link.click()
         games_link = self.should_be_clickable_games_link()
         games_link.click()
-        time.sleep(2)
 
     def go_to_providers(self):
-        self.should_be_logo()
-        self.should_not_be_block_texture()
-        casino_link = self.should_be_clickable_casino_link()
-        casino_link.click()
+        #self.should_be_logo()
+        #self.should_not_be_block_texture()
+        #casino_link = self.should_be_clickable_casino_link()
+        #casino_link.click()
         providers_link = self.should_be_clickable_providers_link()
         providers_link.click()
-        time.sleep(2)
 
     def should_be_clickable_login_link(self):
         assert self.is_element_appeared(*BasePageLocators.LOGIN_LINK), "No Login link (button) at page"
@@ -224,7 +222,6 @@ class ProvidersPage(GamesPage):
         self.should_be_providers_container()
         providers = self.browser.find_elements(*ProvidersPageLocator.PROVIDER)
         providers[index].click()
-        time.sleep(2)
 
     def scroll_and_click_all_games(self, total_games_count=1375, start_index=0, visited_games=0, provider_index=0):
 
