@@ -147,6 +147,39 @@ class GamesPage(BasePage):
             "No Games Container at games page"
         return self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
 
+    def count_all_games(self):
+        self.should_not_be_block_texture()
+        games_container = self.browser.find_element(*GamesPageLocator.GAMES_CONTAINER)
+        action_chains = ActionChains(self.browser)
+        scroll_origin = ScrollOrigin.from_element(games_container)
+
+        games = []
+        for i in range(2000):
+            print("i = ", i)
+            time.sleep(0.8)
+            action_chains.click(games_container).perform()
+            games_loaded = self.browser.find_elements(*GamesPageLocator.GAME)
+            new_games = []
+            load_retries = 0
+            while len(new_games) == 0 and load_retries < 5:
+                if load_retries > 1:
+                    time.sleep(1)
+                for loaded_game in games_loaded:
+                    if loaded_game not in games:
+                        games.append(loaded_game)
+                        new_games.append(loaded_game)
+                print(f"Попытка {load_retries}. Игр загружено: {len(new_games)}")
+                load_retries += 1
+            if len(new_games) == 0 and load_retries >= 5:
+                print("===== Все игры подсчитаны =====")
+                break
+
+            print(len(games))
+            action_chains.scroll_from_origin(scroll_origin, 0, self.game_block_height).perform()
+
+        return len(games)
+
+
     def scroll_and_click_all_games(self, total_games_count=1375, start_index=0, visited_games=0):
 
         self.should_not_be_block_texture()  # проверка на отсутсвие блока загрузки
@@ -198,7 +231,7 @@ class GamesPage(BasePage):
                     # вызваем функцию, но с пропуском всех уже прокликанных игр
                     return
 
-            action_chains.scroll_from_origin(scroll_origin, 0, 142).perform()  # если загруженные игры кончились,
+            action_chains.scroll_from_origin(scroll_origin, 0, self.game_block_height).perform()  # если загруженные игры кончились,
             time.sleep(1)
 
         assert visited == total_games_count, "Количество проверенных игр не равно общему количеству"
@@ -275,7 +308,7 @@ class ProvidersPage(GamesPage):
                     # вызваем функцию, но с пропуском всех уже прокликанных игр
                     return
 
-            action_chains.scroll_from_origin(scroll_origin, 0, 142).perform()  # если загруженные игры кончились,
+            action_chains.scroll_from_origin(scroll_origin, 0, self.game_block_height).perform()  # если загруженные игры кончились,
             time.sleep(1)
 
         print(f"Игр обнаружено: {len(games)}, игр проверено: {visited}")
