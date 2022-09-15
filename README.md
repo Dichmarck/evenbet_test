@@ -1,2 +1,2 @@
 # evenbet_test
-test for https://poker.evenbetpoker.com
+Некоторые наброски для тестирования основных функций сайта https://poker.evenbetpoker.com с помощью Python, Selenium, Allure.
